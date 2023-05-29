@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../../Providers/AuthProveiders';
 
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import Swal from 'sweetalert2';
 
@@ -12,8 +12,12 @@ const Login = () => {
     
     
     const [ disabled, setDisabled] = useState(true);
-    
     const {signIn} = useContext(AuthContext);
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const from  = location.state?.from?.pathname || "/";
     
     useEffect(()=>{
         loadCaptchaEnginge(6); 
@@ -40,6 +44,7 @@ const Login = () => {
                 popup: 'animate__animated animate__fadeOutUp'
               }
             })
+            navigate(from, {replace:true});
         })
     }
     
