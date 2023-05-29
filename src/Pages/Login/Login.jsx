@@ -1,14 +1,16 @@
 import React from 'react';
 import { loadCaptchaEnginge, LoadCanvasTemplate, LoadCanvasTemplateNoReload, validateCaptcha } from 'react-simple-captcha';
-import { useRef, useContext } from 'react';
+import { useContext } from 'react';
 import { AuthContext } from '../../Providers/AuthProveiders';
 
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import Swal from 'sweetalert2';
 
 const Login = () => {
     
-    const captchaRef = useRef(null);
+    
     const [ disabled, setDisabled] = useState(true);
     
     const {signIn} = useContext(AuthContext);
@@ -29,11 +31,20 @@ const Login = () => {
         .then(result =>{
             const user = result.user;
             console.log(user);
+            Swal.fire({
+              title: 'Login succesfull',
+              showClass: {
+                popup: 'animate__animated animate__fadeInDown'
+              },
+              hideClass: {
+                popup: 'animate__animated animate__fadeOutUp'
+              }
+            })
         })
     }
     
     const handleValidateCaptcha = e =>{
-        const user_captcha_value = captchaRef.current.value;
+        const user_captcha_value = e.target.value;
       if(validateCaptcha(user_captcha_value)){
         setDisabled(false)
       }
@@ -44,6 +55,9 @@ const Login = () => {
     
     
     return (
+       <>
+       <Helmet><title>Bristo Boss | login</title> 
+      </Helmet>
         <div className="min-h-screen hero bg-base-200">
         <div className="flex-col hero-content lg:flex-row-reverse">
           <div className="text-center lg:text-left md:w-1/2">
@@ -72,18 +86,19 @@ const Login = () => {
                 <label className="label">
                 < LoadCanvasTemplate />
                 </label>
-                <input type="text" name="captcha" ref={captchaRef} placeholder="type the captcha" className="input input-bordered" />
-                <button onClick={handleValidateCaptcha} className="mt-2 btn btn-outline btn-xs">Validate</button>
+                <input onBlur={handleValidateCaptcha}  type="text" name="captcha"  placeholder="type the captcha" className="input input-bordered" />
+                <button className="mt-2 btn btn-outline btn-xs">Validate</button>
               </div>
               
               <div  className="mt-6 form-control">
                 <input disabled={disabled} type="submit" value="Login" className='btn-primary btn' />
               </div>
             </form>
-            <p><small>New Here? <Link to='signup'>Create an account</Link></small></p>
+            <p><small>New Here? <Link to='/signup'>Create an account</Link></small></p>
           </div>
         </div>
       </div>
+       </>
     );
 };
 
